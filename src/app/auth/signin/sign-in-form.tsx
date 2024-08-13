@@ -7,11 +7,20 @@ import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 type UserAuthForm = {
   email: string;
   password: string;
 };
+
+const schema = yup
+  .object({
+    email: yup.string().email().required(),
+    password: yup.string().min(6).required(),
+  })
+  .required();
 
 function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -21,17 +30,16 @@ function SignInForm() {
     handleSubmit,
     register,
     formState: { errors },
-  } = useForm<UserAuthForm>({});
+  } = useForm<UserAuthForm>({
+    resolver: yupResolver(schema),
+  });
 
   const onSubmit = (data: UserAuthForm) => {
     console.log("🚀 ~file: sign-in-form.tsx:27 ~ onSubmit ~ data:", data);
   };
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col w-[100%] gap-4 items-center"
-    >
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-[100%]">
       <div className="w-[100%] text-3xl font-semibold tracking-widest mb-2 text-center">
         Masuk akun anda
       </div>
@@ -42,7 +50,7 @@ function SignInForm() {
         {...register("email")}
         error={errors.email?.message}
       />
-      <div className="w-[100%] relative">
+      <div className="w-[100%] relative mt-4">
         <Input
           className="w-[100%] p-4 rounded-sm"
           type={showPassword ? "text" : "password"}
@@ -55,7 +63,7 @@ function SignInForm() {
       </div>
 
       <Button
-        className={cn("w-[320px] bg-leaf mt-6", hover.shadow)}
+        className={cn("w-[320px] bg-leaf mt-6 mx-auto", hover.shadow)}
         type="submit"
       >
         Masuk
