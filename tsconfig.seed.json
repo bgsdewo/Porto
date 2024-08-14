@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "module": "CommonJS", // Mengubah module menjadi CommonJS untuk mendukung ts-node
+    "target": "ES2019", // Anda bisa menggunakan ES5 atau ES2019
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "include": ["prisma/seeds/**/*.ts"] // Sertakan file TypeScript di dalam folder seeding
+}
