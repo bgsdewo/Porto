@@ -1,18 +1,18 @@
-import React from "react";
+"use client";
 import { SessionProvider } from "next-auth/react";
 import { Provider as ReduxProvider } from "react-redux";
-import { store } from "../store"; // Pastikan path ini benar
+import { store } from "../store";
 
 interface ProviderProps {
   children: React.ReactNode;
 }
 
-function ReduxStoreProvider({ children }: ProviderProps) {
+function Provider({ children }: { children: React.ReactNode }) {
   return (
     <SessionProvider>
-      <ReduxProvider store={store}>{children ?? null}</ReduxProvider>
+      <ReduxProvider store={store}>{children}</ReduxProvider>;
     </SessionProvider>
   );
 }
 
-export default ReduxStoreProvider;
+export default Provider;
