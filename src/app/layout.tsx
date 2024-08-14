@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 
 // styles
 import "./globals.css";
-import { Provider } from "@radix-ui/react-toast";
+import Provider from "./provider";
 
 const poppins = Poppins({
   subsets: ["latin"],

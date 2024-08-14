@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,10 @@ import { hover } from "@/lib/hover";
 import { cn } from "@/lib/utils";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useRegisterMutation } from "@/services/auth";
+import { signIn } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useToast } from "@/components/ui/use-toast";
 
 type UserAuthForm = {
   email: string;
@@ -31,7 +34,9 @@ function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmationPassword, setShowConfirmationPassword] =
     useState(false);
-
+  const { toast } = useToast();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const {
     handleSubmit,
     register,
@@ -40,8 +45,30 @@ function SignUpForm() {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = (data: UserAuthForm) => {
-    console.log("🚀 ~file: sign-up-form.tsx:27 ~ onSubmit ~ data:", data);
+  const [registerMutation] = useRegisterMutation();
+
+  const onSubmit = async (data: UserAuthForm) => {
+    try {
+      const res = await registerMutation(data).unwrap();
+      if (res.success) {
+        const user = await signIn("credentials", {
+          email: data.email,
+          password: data.password,
+          callbackUrl: searchParams.get("callbackUrl") || "/",
+          redirect: false,
+        });
+        router.push(user?.url || "/");
+      } else {
+        toast({
+          title: "Somethin when wrong",
+          description: "Please check your email and password",
+          variant: "destructive",
+          duration: 2000,
+        });
+      }
+    } catch (error) {
+      console.log("🚀 ~ file: sign-up-form.tsx:48 ~ onSubmit ~ error:", error);
+    }
   };
 
   return (
@@ -50,22 +77,21 @@ function SignUpForm() {
         Buat akun baru
       </div>
       <Input
-        className="w-[100%]  mt-4"
+        className="w-[100%] mt-4"
         type="text"
         placeholder="Nama Lengkap"
         {...register("name")}
         error={errors.name?.message}
       />
       <Input
-        className="w-[100%]  mt-4"
+        className="w-[100%] mt-4"
         type="text"
         placeholder="Email"
         {...register("email")}
         error={errors.email?.message}
       />
-
       <Input
-        className="w-[100%]  mt-4"
+        className="w-[100%] mt-4"
         type={showPassword ? "text" : "password"}
         placeholder="Kata Sandi"
         suffix="Eye"
@@ -73,9 +99,8 @@ function SignUpForm() {
         {...register("password")}
         error={errors.password?.message}
       />
-
       <Input
-        className="w-[100%]  mt-4"
+        className="w-[100%] mt-4"
         type={showConfirmationPassword ? "text" : "password"}
         placeholder="Konfirmasi Kata Sandi"
         suffix="Eye"
@@ -85,7 +110,6 @@ function SignUpForm() {
         {...register("confirm_password")}
         error={errors.confirm_password?.message}
       />
-
       <Button
         type="submit"
         className={cn("w-[320px] bg-leaf mt-6 mx-auto", hover.shadow)}
