@@ -77,7 +77,7 @@ export default function Products() {
               </div>
               <ProductShowcase
                 gridConfig={"grid-cols-3"}
-                products={data?.data || []}
+                products={data?.data?.data || []}
                 isLoading={isLoading}
               />
 
@@ -109,7 +109,7 @@ export default function Products() {
         </div>
         <ProductShowcase
           gridConfig={"grid-cols-4"}
-          products={recommendationProducts?.data.slice(0, 4) || []}
+          products={recommendationProducts?.data?.data.slice(0, 4) || []}
           isLoading={recommendationisLoading}
         />
       </div>
