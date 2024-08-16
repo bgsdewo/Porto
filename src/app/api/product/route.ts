@@ -17,6 +17,10 @@ export async function GET(req: NextRequest) {
     const maxPrice = query.get("max_price")
       ? parseInt(query.get("max_price") as string)
       : undefined;
+    const ratings = query
+      .get("rating")
+      ?.split(",")
+      .map((val) => +val || undefined);
     const skip = page * take;
     const queryConditions = {
       AND: [
@@ -24,11 +28,12 @@ export async function GET(req: NextRequest) {
           category: {
             in: categories as ProductCategory[],
           },
-        },
-        {
           price: {
             gte: minPrice,
             lte: maxPrice,
+          },
+          rating: {
+            in: ratings,
           },
         },
       ],

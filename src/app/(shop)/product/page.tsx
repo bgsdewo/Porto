@@ -40,6 +40,7 @@ export default function Products() {
     category: searchParams.get("category") || undefined,
     min_price: searchParams.get("min_price") || undefined,
     max_price: searchParams.get("max_price") || undefined,
+    rating: searchParams.get("rating") || undefined,
   });
   const { data: recommendationProducts, isLoading: recommendationisLoading } =
     useGetAllProductsQuery({});
@@ -90,7 +91,16 @@ export default function Products() {
             }}
           />
           <div className="w-full separator my-4" />
-          <FilterRating />
+          <FilterRating
+            value={
+              searchParams.get("rating")
+                ? searchParams.get("rating")?.split(",")
+                : []
+            }
+            onChange={(selectedRating) =>
+              handleChangeFilter("rating", selectedRating.join(","))
+            }
+          />
         </div>
 
         <div className="flex-[3]">
