@@ -35,12 +35,14 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <input
             type={type}
             className={cn(
-              " flex-1 h-9 pl-4 w-full rounded-md ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              "flex-1 h-9 pl-4 w-full rounded-md ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+              {
+                "pl-10": props.prefix, // Kondisi penambahan padding-left jika ada prefix
+              }
             )}
             ref={ref}
             {...props}
           />
-
           {props.prefix && (
             <div className="absolute  py-[10px] px-3 text-sm">
               {_renderPrefixSuffix(props.prefix)}
