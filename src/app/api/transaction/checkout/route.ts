@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
       //   userId: session?.user.id,
       userId: "clzsdrjpw0001bzostyd8bgtv",
       qty: payload.qty,
-      pricePerItem: payload.price,
+      pricePerItem: product.price,
     },
   });
   return Response({
