@@ -20,16 +20,35 @@ import {
   useGetAllProductsQuery,
   useGetProductByIdQuery,
 } from "@/services/product";
+import { useCheckoutMutation } from "@/services/transaction";
+import { useSession } from "next-auth/react";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function Products({ params }: { params: { id: string } }) {
+  const { data: session } = useSession();
   const router = useRouter();
   const [itemCount, setItemCount] = useState(1);
+  const { toast } = useToast();
 
-  // const productDetails = ProductsJSON[0];
   const { data: productDetails } = useGetProductByIdQuery(params.id);
   const { data: recommendedProducts } = useGetAllProductsQuery({});
-  // const [recommendedProducts] = useState<ProductDetails[]>(ProductsJSON);
-
+  const [mutateCheckout] = useCheckoutMutation();
+  const handleAddToCart = async () => {
+    if (!session?.user) {
+      toast({
+        title: "Please sign frist",
+        variant: "destructive",
+      });
+      router.push("/auth/signin");
+      return;
+    }
+    const data = {
+      product_id: params.id,
+      qty: itemCount,
+    };
+    await mutateCheckout(data);
+    router.push("/checkout");
+  };
   return (
     <main className="flex flex-col w-full min-h-screen items-center pb-8">
       <div className="w-content flex pt-5 gap-12">
@@ -74,6 +93,7 @@ export default function Products({ params }: { params: { id: string } }) {
                 "py-1 px-4 bg-leaf text-white leading-4",
                 hover.shadow
               )}
+              onClick={handleAddToCart}
             >
               <IconCart className="w-5 h-5 mr-2" />
               Masukkan Keranjang
@@ -83,9 +103,7 @@ export default function Products({ params }: { params: { id: string } }) {
                 "py-1 px-4 bg-carrot text-white leading-4",
                 hover.shadow
               )}
-              onClick={() => {
-                router.push("/checkout");
-              }}
+              onClick={handleAddToCart}
             >
               <IconBag className="w-5 h-5 mr-2" />
               Beli Sekarang
