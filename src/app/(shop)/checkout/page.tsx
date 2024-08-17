@@ -9,15 +9,19 @@ import ItemList from "./ItemList";
 // utils
 import { cn, formatNumber } from "@/lib/utils";
 import { hover } from "@/lib/hover";
-import { useCheckoutsQuery } from "@/services/transaction";
+import { useCheckoutsQuery, usePaymentMutation } from "@/services/transaction";
 import { useState } from "react";
 import { DeliveryMethod } from "@/types/deliver-method";
+import { useToast } from "@/components/ui/use-toast";
+import { useRouter } from "next/navigation";
 
 export default function Checkout() {
   const [deliveryMethod, setDeliveryMethod] =
     useState<DeliveryMethod>("HOME_DELIVERY");
-
+  const router = useRouter();
+  const { toast } = useToast();
   const { data } = useCheckoutsQuery();
+  const [mutatePayment] = usePaymentMutation();
   const products = data?.data || [];
 
   const totalPrice = products.reduce(
@@ -33,7 +37,29 @@ export default function Checkout() {
   const insurance = deliveryMethod === "HOME_DELIVERY" ? 2000 : 0;
 
   const subtotal = totalPrice + deliveryFee + insurance + applicationFee;
-
+  const handlePayment = async () => {
+    try {
+      const data = {
+        application_fee: applicationFee,
+        asurance_fee: insurance,
+        delivery_fee: deliveryFee,
+        delivery_type: deliveryMethod,
+      };
+      await mutatePayment(data);
+      toast({
+        title: "Payment Succes",
+        description: "Your Payment has been landed successfully",
+        duration: 2000,
+      });
+      router.push("/history");
+    } catch (error) {
+      toast({
+        title: "Something when wrong!",
+        variant: "destructive",
+        duration: 2000,
+      });
+    }
+  };
   return (
     <>
       <main className="flex flex-col w-full items-center pb-16 pt-5">
@@ -87,11 +113,12 @@ export default function Checkout() {
               </div>
             </div>
             <div className="flex flex-1">
-              <Link className="w-[100%]" href={"/payment"}>
-                <Button className={cn("w-[100%] mt-6 bg-leaf", hover.shadow)}>
-                  Lanjutkan Pembayaran
-                </Button>
-              </Link>
+              <Button
+                className={cn("w-[100%] mt-6 bg-leaf", hover.shadow)}
+                onClick={handlePayment}
+              >
+                Lanjutkan Pembayaran
+              </Button>
             </div>
           </div>
         </div>
