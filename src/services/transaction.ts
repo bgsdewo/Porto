@@ -8,15 +8,15 @@ interface CheckoutResponse extends BaseResponse {
 
 interface CheckoutsResponse extends BaseResponse {
   data: {
-    id: String;
-    userId: String;
-    productId: String;
-    qty: Number;
-    pricePerItem: Number;
+    id: string;
+    userId: string;
+    productId: string;
+    qty: number;
+    pricePerItem: number;
     createdAt: Date;
     updatedAt: Date;
     product: Product;
-  };
+  }[];
 }
 
 interface CheckoutPayload {
