@@ -1,9 +1,24 @@
 import BaseResponse from "@/types/response";
-import { Checkout } from "@prisma/client";
+import { Checkout, Product } from "@prisma/client";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
+
 interface CheckoutResponse extends BaseResponse {
   data: Checkout;
 }
+
+interface CheckoutsResponse extends BaseResponse {
+  data: {
+    id: String;
+    userId: String;
+    productId: String;
+    qty: Number;
+    pricePerItem: Number;
+    createdAt: Date;
+    updatedAt: Date;
+    product: Product;
+  };
+}
+
 interface CheckoutPayload {
   product_id: string;
   qty: number;
@@ -21,8 +36,15 @@ export const transactionApi = createApi({
         method: "POST",
         body,
       }),
+      invalidatesTags: ["checkout"],
+    }),
+    checkouts: builder.query<CheckoutResponse, void>({
+      query: () => ({
+        url: "/checkout",
+      }),
+      providesTags: ["checkout"],
     }),
   }),
 });
 
-export const { useCheckoutMutation } = transactionApi;
+export const { useCheckoutMutation, useCheckoutsQuery } = transactionApi;
