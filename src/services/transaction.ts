@@ -23,9 +23,35 @@ interface PaymentResponse extends BaseResponse {
   data: Transaction;
 }
 
+interface CheckoutWithProduct {
+  id: string;
+  userId: string;
+  productId: string;
+  transactionId: string;
+  qty: number;
+  pricePerItem: number;
+  createdAt: Date;
+  updatedAt: Date;
+  product: Product;
+}
+
+export interface TransactionWithCheckout {
+  id: string;
+  userId: string;
+  totalPrice: number;
+  deliveryFee: number;
+  asuranceFee: number;
+  applicationFee: number;
+  grandTotalPrice: number;
+  deliveryType: DeliveryType;
+  createdAt: Date;
+  updatedAt: Date;
+  Checkout: CheckoutWithProduct[];
+}
+
 interface HistoryResponse extends BaseResponse {
   data: {
-    data: Transaction[];
+    data: TransactionWithCheckout[];
     total: number;
   };
 }
