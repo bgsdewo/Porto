@@ -137,7 +137,7 @@ export default function History() {
             href="/product"
             className="text-base p-0 h-auto bg-white text-neutral-600"
           >
-            Lihat Selengkapnya {">"}
+            Lihat Selengkapnyaa {">"}
           </Link>
         </div>
         <ProductShowcase
